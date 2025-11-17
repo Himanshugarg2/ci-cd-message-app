@@ -1,0 +1,64 @@
+.container {
+  width: 600px;
+  margin: 40px auto;
+  font-family: Arial, sans-serif;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.form {
+  margin-bottom: 30px;
+}
+
+.input,
+.textarea {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+}
+
+.textarea {
+  height: 80px;
+  resize: vertical;
+}
+
+.button {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+}
+
+.button:hover {
+  background: #0056b3;
+}
+
+.subtitle {
+  margin-top: 20px;
+}
+
+.message-list {
+  list-style: none;
+  padding: 0;
+}
+
+.message-card {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 12px;
+  margin-bottom: 12px;
+  background: #fafafa;
+}
+
+.message-card strong {
+  display: block;
+  margin-bottom: 5px;
+}

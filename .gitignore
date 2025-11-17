@@ -1,0 +1,18 @@
+# Python
+backend/__pycache__/
+backend/.pytest_cache/
+backend/venv/
+backend/.venv/
+
+# Node / React
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/.eslintcache/
+
+# Docker
+**/*.log
+
+# OS files
+.DS_Store
+Thumbs.db
