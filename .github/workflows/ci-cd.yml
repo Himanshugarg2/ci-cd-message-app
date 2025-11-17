@@ -29,9 +29,11 @@ jobs:
         run: |
           cd backend
           pip install -r requirements.txt
+          pip install flake8  # Ensure flake8 exists
 
       - name: Run backend tests
         run: |
+          export PYTHONPATH="$GITHUB_WORKSPACE"
           cd backend
           pytest -q
 
@@ -61,8 +63,7 @@ jobs:
           cd frontend
           npm run lint
 
-      # ---------------- Optional Build (CI validation) ----------------
-      - name: Build frontend (Vite)
+      - name: Build frontend
         run: |
           cd frontend
           npm run build
