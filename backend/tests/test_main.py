@@ -3,7 +3,7 @@ from httpx import AsyncClient, ASGITransport
 from backend.main import app
 
 
-@pytest.mark.anyio
+@pytest.mark.anyio("asyncio")
 async def test_post_message():
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as client:
@@ -17,7 +17,7 @@ async def test_post_message():
         assert data["message"] == "Hello"
 
 
-@pytest.mark.anyio
+@pytest.mark.anyio("asyncio")
 async def test_get_messages():
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as client:
