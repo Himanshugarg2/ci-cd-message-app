@@ -2,23 +2,28 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
+
+env:
+  FRONTEND_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/message-frontend
+  BACKEND_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/message-backend
 
 jobs:
-  build-test-lint:
+
+  test_and_build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      # BACKEND PYTHON
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      # ---------------- BACKEND ----------------
+      - name: Setup Python
+        uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install backend dependencies
         run: |
@@ -30,34 +35,67 @@ jobs:
           cd backend
           pytest -q
 
-      - name: Run backend lint
+      - name: Lint backend
         run: |
           cd backend
           flake8
 
-      # FRONTEND NODE
-      - name: Set up Node
+      # ---------------- FRONTEND ----------------
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: 18
 
       - name: Install frontend dependencies
         run: |
           cd frontend
-          npm install
+          npm ci
 
       - name: Run frontend tests
         run: |
           cd frontend
           npm test -- --watchAll=false
 
-      - name: Run frontend lint
+      - name: Lint frontend
         run: |
           cd frontend
           npm run lint
 
-      # OPTIONAL: Docker build
-      - name: Build Docker images
+      # ---------------- Optional Build (CI validation) ----------------
+      - name: Build frontend (Vite)
         run: |
-          docker build -t frontend ./frontend
-          docker build -t backend ./backend
+          cd frontend
+          npm run build
+
+  # ---------------- PUSH DOCKER IMAGES ----------------
+  push_images:
+    needs: test_and_build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Docker login
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build & Push backend image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./backend
+          push: true
+          tags: |
+            ${{ env.BACKEND_IMAGE }}:latest
+            ${{ env.BACKEND_IMAGE }}:${{ github.sha }}
+
+      - name: Build & Push frontend image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./frontend
+          push: true
+          tags: |
+            ${{ env.FRONTEND_IMAGE }}:latest
+            ${{ env.FRONTEND_IMAGE }}:${{ github.sha }}
