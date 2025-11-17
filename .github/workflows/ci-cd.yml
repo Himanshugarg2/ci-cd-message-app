@@ -29,7 +29,7 @@ jobs:
           pip install -r requirements.txt
           pip install flake8
 
-      - name: Run backend tests (forced asyncio)
+      - name: Run backend tests 
         env:
           ANYIO_BACKENDS: asyncio   
         run: |
