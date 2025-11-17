@@ -18,8 +18,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      # ---------------- BACKEND ----------------
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
@@ -29,11 +27,12 @@ jobs:
         run: |
           cd backend
           pip install -r requirements.txt
-          pip install flake8  # Ensure flake8 exists
+          pip install flake8
 
-      - name: Run backend tests
+      - name: Run backend tests (forced asyncio)
+        env:
+          ANYIO_BACKENDS: asyncio   
         run: |
-          export PYTHONPATH="$GITHUB_WORKSPACE"
           cd backend
           pytest -q
 
